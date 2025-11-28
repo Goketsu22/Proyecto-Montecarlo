@@ -1,0 +1,43 @@
+# MODEL_NAME: TRAFFIC_SIMULATION
+# DESCRIPTION: Simula el flujo de tráfico en una intersección
+
+# PARAMETERS:
+INTERSECTION_CAPACITY = 10
+ARRIVAL_RATE = 0.3  # Probabilidad de llegada de coche por tiempo
+DEPARTURE_RATE = 0.4  # Probabilidad de salida
+SIMULATION_STEPS = 100
+
+# SIMULATION:
+ROUNDS = 1
+OUTPUT = "average_wait_time"
+
+def model_fn(scenario):
+    import random
+    import statistics
+    
+    queue = 0
+    wait_times = []
+    current_wait = 0
+    
+    for step in range(SIMULATION_STEPS):
+        # Llegadas
+        if random.random() < ARRIVAL_RATE:
+            queue += 1
+            current_wait = 0
+        
+        # Salidas
+        if queue > 0 and random.random() < DEPARTURE_RATE:
+            queue -= 1
+            wait_times.append(current_wait)
+        
+        # Incrementar tiempo de espera para todos en cola
+        current_wait += 1
+    
+    avg_wait = statistics.mean(wait_times) if wait_times else 0
+    
+    return {
+        "average_wait_time": avg_wait,
+        "max_queue_length": queue,
+        "total_processed": len(wait_times),
+        "congestion_level": queue / INTERSECTION_CAPACITY
+    }
