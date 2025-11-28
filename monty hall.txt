@@ -1,0 +1,40 @@
+#monty hall.txt
+
+# MODEL_NAME: MONTY_HALL_SWITCH
+# DESCRIPTION:
+#   Simulación del problema de Monty Hall donde el jugador SIEMPRE cambia
+#   su elección después de que el anfitrión abre una puerta vacía.
+
+# PARAMETERS:
+DOORS = 3
+STRATEGY = "switch" 
+
+# SIMULATION:
+ROUNDS = 1
+OUTPUT = "win_flag"   # 1=ganó, 0=perdió
+
+def model_fn(scenario):
+    """
+    Ejecuta 1 ronda de Monty Hall con estrategia SWITCH.
+    'scenario' puede incluir valores aleatorios adicionales pero no se usan.
+    """
+    import random
+
+    # Paso 1: el premio está en una puerta aleatoria
+    prize = random.randint(0, DOORS - 1)
+
+    # Paso 2: el jugador elige una puerta al azar
+    player_choice = random.randint(0, DOORS - 1)
+
+    # Paso 3: el anfitrión abre una puerta que NO tiene premio y NO es la elegida
+    possible_doors = [d for d in range(DOORS) if d != player_choice and d != prize]
+    host_opens = random.choice(possible_doors)
+
+    # Paso 4: si la estrategia es cambiar, el jugador cambia a la otra puerta disponible
+    if STRATEGY == "switch":
+        remaining_doors = [d for d in range(DOORS) if d != player_choice and d != host_opens]
+        player_choice = remaining_doors[0]
+
+    # Paso 5: resultado
+    win_flag = 1 if player_choice == prize else 0
+    return {"win_flag": win_flag}

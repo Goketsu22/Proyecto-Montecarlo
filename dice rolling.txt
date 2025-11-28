@@ -1,0 +1,22 @@
+# MODEL_NAME: DICE_ROLL
+# DESCRIPTION: Simulación de lanzamiento de dados con diferentes caras
+
+# PARAMETERS:
+DICE_SIDES = 6
+TARGET_NUMBER = 4  # Número para ganar
+
+# SIMULATION:
+ROUNDS = 1
+OUTPUT = "win_flag"
+
+def model_fn(scenario):
+    import random
+    
+    roll = random.randint(1, DICE_SIDES)
+    win_flag = 1 if roll >= TARGET_NUMBER else 0
+    
+    return {
+        "win_flag": win_flag,
+        "roll_result": roll,
+        "dice_sides": DICE_SIDES
+    }
